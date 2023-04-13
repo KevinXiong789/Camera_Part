@@ -547,7 +547,7 @@ while True:
 		print("right hand x: %.4f, y: %.4f"%(right_x,right_y))
 		point_list.append([int(right_x), int(right_y)])
 
-		#get right hand xyd position
+		#get right hand xyd position, turn to meter
 		right_x=(skeleton.right_hand.real[0])*0.001
 		right_y=(-skeleton.right_hand.real[1])*0.001
 		#here nuitrack coordinate system (y) is different with D435 camera in pointcloud
