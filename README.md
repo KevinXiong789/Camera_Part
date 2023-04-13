@@ -11,9 +11,9 @@ this pkg (min-distance-get-pub.cpp) can get pointcloud from D435 camera and calc
 **this pkg can only run with realsense-ros together**
 #### run
 In workspace, Terminal 1:
-'<ros2 launch realsense2_camera rs_launch.py pointcloud.enable:=true>'
+`ros2 launch realsense2_camera rs_launch.py pointcloud.enable:=true`
 Terminal 2:
-'<ros2 run pointcloud_test min_distance_get>'
+`ros2 run pointcloud_test min_distance_get`
 ### influxdb_test
 this pkg realize:
 * subscribe min-distance of pointcloud and send these Info to InfluxDB (min-distance-sub-inDB.py)
@@ -22,7 +22,7 @@ this pkg realize:
 #### run
 min-distance-sub-inDB.py **must run with min-distance-get-pub.cpp**
 Terminal 3:
-'<ros2 run influxdb_test min_distance_sub_inDB>'
+`ros2 run influxdb_test min_distance_sub_inDB`
 
 nuitrack-to-InfluxDB.py and heatmap-test.py can run direct, as long as Nuitrack is installed
 
