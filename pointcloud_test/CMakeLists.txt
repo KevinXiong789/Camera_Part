@@ -11,14 +11,14 @@ find_package(sensor_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(PCL REQUIRED COMPONENTS common io)
 find_package(std_msgs REQUIRED)
-#find_package(tf REQUIRED)
+
+
+
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
 #min_distance.msg part
-
-
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 
@@ -44,12 +44,24 @@ ament_target_dependencies(min_distance_get
 )
 target_link_libraries(min_distance_get ${PCL_LIBRARIES})
 
+#handover_tool_in_hand.cpp part
+add_executable(handover_tool_in_hand
+  src/handover_tool_in_hand_detector.cpp
+)
+ament_target_dependencies(handover_tool_in_hand
+  rclcpp 
+  sensor_msgs
+  std_msgs
+  
+)
+target_link_libraries(handover_tool_in_hand ${PCL_LIBRARIES})
 
 
 #Don't forget add executable name here
 install(TARGETS
     pointcloud_test_sub
     min_distance_get
+    handover_tool_in_hand
     DESTINATION lib/${PROJECT_NAME}) 
 
 

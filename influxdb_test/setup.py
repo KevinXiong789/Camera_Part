@@ -21,7 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'min_distance_sub_inDB = influxdb_test.min_distance_sub_inDB:main',
-            'nuitrack_test = influxdb_test.nuitrack_test:main',
+            
             'nuitrack_to_InfluxDB = influxdb_test.nuitrack_to_InfluxDB:main',
             'heatmap_test = influxdb_test.heatmap_test:main'
         ],
