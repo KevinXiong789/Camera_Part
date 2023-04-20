@@ -15,6 +15,12 @@ In workspace, Terminal 1:
 
 Terminal 2:
 `ros2 run pointcloud_test min_distance_get`
+### pointcloud_processing
+this pkg realize same function with pointcloud_test, but cmakelist and code are cleaner
+#### run
+Terminal 2:
+`ros2 run pointcloud_processing min_distance`
+
 ### influxdb_test
 this pkg realize:
 * subscribe min-distance of pointcloud and send these Info to InfluxDB (min-distance-sub-inDB.py)
