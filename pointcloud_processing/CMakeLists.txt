@@ -12,9 +12,20 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(PCL REQUIRED COMPONENTS common io)
 find_package(std_msgs REQUIRED)
 
+#find_package(PCL REQUIRED COMPONENTS common io)
+#find_package(PCL REQUIRED COMPONENTS filters)
+#find_package(PCL REQUIRED COMPONENTS segmentation)
+#find_package(PCL REQUIRED COMPONENTS sample_consensus)
+#find_package(PCL REQUIRED COMPONENTS surface)
+find_package(PCL REQUIRED)
+find_package(pcl_conversions REQUIRED)
+
+
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
 
 #min_distance.cpp part
 add_executable(min_distance src/min_distance.cpp)
@@ -30,9 +41,12 @@ ament_target_dependencies(handover_T_inhand_detector
   rclcpp 
   sensor_msgs
   std_msgs
+  PCL
+  pcl_conversions
+
+
 )
-
-
+target_link_libraries(handover_T_inhand_detector ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES} ${PCL_SAMPLE_CONSENSUS_LIBRARIES} ${PCL_SURFACE_LIBRARIES})
 
 #Don't forget add executable name here
 install(TARGETS

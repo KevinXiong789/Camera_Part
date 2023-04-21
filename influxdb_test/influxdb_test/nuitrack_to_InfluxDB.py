@@ -243,7 +243,7 @@ if __name__ == '__main__':
 '''
 	  
 '''
-#******************min code of nuitrack(just for test)***********************
+#******************min code of nuitrack(just for test)***********************can run
 from PyNuitrack import py_nuitrack
 import cv2
 import numpy as np
@@ -299,6 +299,8 @@ if __name__ == '__main__':
 	main()
 '''
 
+
+
 #********************Nuitrack+InfluxDB+Publisher another form************************************can run
 from PyNuitrack import py_nuitrack
 import cv2
@@ -315,6 +317,13 @@ class NuitrackPublisher(Node):
 		self.publisher = self.create_publisher(Float32MultiArray, '/Nuitrack/right_hand_position', 1)
 		self.nuitrack = py_nuitrack.Nuitrack()
 		self.nuitrack.init()
+		
+		devices = self.nuitrack.get_device_list()
+		i = 1
+		dev = devices[i] # Set i to the index of the device you want to select
+		print(dev.get_name(), dev.get_serial_number())
+		self.nuitrack.set_device(dev)
+		
 		self.nuitrack.create_modules()
 		self.nuitrack.run()
 		#set necessary info to connect InfluxDBClient
@@ -338,7 +347,16 @@ class NuitrackPublisher(Node):
 			# here nuitrack coordinate system (y) is different with D435 camera in pointcloud
 			right_d = (skeleton.right_hand.real[2]) * 0.001
 			print("right hand x: %.4f, y: %.4f, d: %.4f" % (right_x, right_y, right_d))
+
+			# turn unit to meter
+			right_elbow_x = (skeleton.right_elbow.real[0]) * 0.001
+			right_elbow_y = (-skeleton.right_elbow.real[1]) * 0.001
+			# here nuitrack coordinate system (y) is different with D435 camera in pointcloud
+			right_elbow_d = (skeleton.right_elbow.real[2]) * 0.001
+			#print("right elbow x: %.4f, y: %.4f, d: %.4f" % (right_elbow_x, right_elbow_y, right_elbow_d))
+
 			
+			# Right hand Daten to InfluxDB send
 			timestamp = int(time.time()*1000)
 			data_point = Point("right_hand_position") \
 						.field("x", right_x) \
@@ -347,8 +365,9 @@ class NuitrackPublisher(Node):
 						.time(timestamp,"ms")
 			self.influxdb_write_api.write(bucket="min_distance_test", record=data_point)
 
+			# publish right hand and right elbow position
 			msg = Float32MultiArray()
-			msg.data = [right_x, right_y, right_d]
+			msg.data = [right_x, right_y, right_d, right_elbow_x, right_elbow_y, right_elbow_d]
 			self.publisher.publish(msg)
 
 	def run_nuitrack(self):
@@ -397,8 +416,8 @@ class NuitrackPublisher(Node):
 		self.publisher = self.create_publisher(Float32MultiArray, '/Nuitrack/right_hand_position', 1)
 		self.bridge = CvBridge()
 		self.subscription = self.create_subscription(Image, '/camera/depth/image_rect_raw', self.image_callback, 1)
-		self.subscription  # prevent unused variable warning
-		self.data = None
+		#self.subscription  # prevent unused variable warning
+		#self.data = None
 
 	def image_callback(self, msg):
 		try:
@@ -409,6 +428,7 @@ class NuitrackPublisher(Node):
 			self.draw_skeleton(img_depth)
 			cv2.imshow('Image', img_depth)
 			cv2.waitKey(1)
+			
 		except Exception as e:
 			self.get_logger().error('Error processing depth image: {}'.format(e))
 
@@ -437,15 +457,76 @@ def main(args=None):
 	nuitrack = py_nuitrack.Nuitrack()
 	nuitrack.init()
 	nuitrack.create_modules()
-	nuitrack.run()
+	#nuitrack.run()
 	while rclpy.ok():
-		nuitrack.update()
+		#nuitrack.update()
 		nuitrack_publisher.data = nuitrack.get_skeleton()
 		nuitrack_publisher.right_hand_position()
 		rclpy.spin_once(nuitrack_publisher)
+
 	nuitrack.release()
 	rclpy.shutdown()
 
 if __name__ == '__main__':
 	main()
+'''
+
+
+'''
+#*******************Nuitrack example code, device choice test**************testing
+from PyNuitrack import py_nuitrack
+import cv2
+from itertools import cycle
+import numpy as np
+
+
+def draw_skeleton(image):
+	point_color = (59, 164, 0)
+	for skel in data.skeletons:
+		for el in skel[1:]:
+			x = (round(el.projection[0]), round(el.projection[1]))
+			cv2.circle(image, x, 8, point_color, -1)
+
+nuitrack = py_nuitrack.Nuitrack()
+nuitrack.init()
+
+devices = nuitrack.get_device_list()
+i = 1
+dev = devices[i] # Set i to the index of the device you want to select
+print(dev.get_name(), dev.get_serial_number())
+nuitrack.set_device(dev)
+
+
+#print(nuitrack.get_version())
+#print(nuitrack.get_license())
+
+nuitrack.create_modules()
+nuitrack.run()
+
+modes = cycle(["depth", "color"])
+mode = next(modes)
+while 1:
+	key = cv2.waitKey(1)
+	nuitrack.update()
+	data = nuitrack.get_skeleton()
+	data_instance=nuitrack.get_instance()
+	img_depth = nuitrack.get_depth_data()
+	if img_depth.size:
+		cv2.normalize(img_depth, img_depth, 0, 255, cv2.NORM_MINMAX)
+		img_depth = np.array(cv2.cvtColor(img_depth,cv2.COLOR_GRAY2RGB), dtype=np.uint8)
+		img_color = nuitrack.get_color_data()
+		draw_skeleton(img_depth)
+		draw_skeleton(img_color)
+		
+		if key == 32:
+			mode = next(modes)
+		if mode == "depth":
+			cv2.imshow('Image', img_depth)
+		if mode == "color":
+			if img_color.size:
+				cv2.imshow('Image', img_color)
+	if key == 27:
+		break
+
+nuitrack.release()
 '''

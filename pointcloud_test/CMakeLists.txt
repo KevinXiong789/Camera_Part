@@ -57,11 +57,14 @@ ament_target_dependencies(handover_tool_in_hand
 target_link_libraries(handover_tool_in_hand ${PCL_LIBRARIES})
 
 
+
+
 #Don't forget add executable name here
 install(TARGETS
     pointcloud_test_sub
     min_distance_get
     handover_tool_in_hand
+    
     DESTINATION lib/${PROJECT_NAME}) 
 
 
