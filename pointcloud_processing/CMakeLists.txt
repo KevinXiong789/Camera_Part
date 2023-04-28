@@ -14,6 +14,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 
+
 #find_package(PCL REQUIRED COMPONENTS common io)
 #find_package(PCL REQUIRED COMPONENTS filters)
 #find_package(PCL REQUIRED COMPONENTS segmentation)
@@ -21,6 +22,7 @@ find_package(std_msgs REQUIRED)
 #find_package(PCL REQUIRED COMPONENTS surface)
 find_package(PCL REQUIRED)
 find_package(pcl_conversions REQUIRED)
+find_package(angles REQUIRED)
 
 
 include_directories(${PCL_INCLUDE_DIRS})
@@ -43,7 +45,7 @@ ament_target_dependencies(handover_T_inhand_detector
   std_msgs
   PCL
   pcl_conversions
-
+  angles
 
 )
 target_link_libraries(handover_T_inhand_detector ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${PCL_FILTERS_LIBRARIES} ${PCL_SEGMENTATION_LIBRARIES} ${PCL_SAMPLE_CONSENSUS_LIBRARIES} ${PCL_SURFACE_LIBRARIES})

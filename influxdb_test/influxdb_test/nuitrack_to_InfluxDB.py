@@ -302,6 +302,7 @@ if __name__ == '__main__':
 
 
 #********************Nuitrack+InfluxDB+Publisher another form************************************can run
+#****************Use Nuitrack get right hand and elbow position, publish them as topic and send hand Position to InfluxDB**************
 from PyNuitrack import py_nuitrack
 import cv2
 import numpy as np
@@ -471,62 +472,3 @@ if __name__ == '__main__':
 	main()
 '''
 
-
-'''
-#*******************Nuitrack example code, device choice test**************testing
-from PyNuitrack import py_nuitrack
-import cv2
-from itertools import cycle
-import numpy as np
-
-
-def draw_skeleton(image):
-	point_color = (59, 164, 0)
-	for skel in data.skeletons:
-		for el in skel[1:]:
-			x = (round(el.projection[0]), round(el.projection[1]))
-			cv2.circle(image, x, 8, point_color, -1)
-
-nuitrack = py_nuitrack.Nuitrack()
-nuitrack.init()
-
-devices = nuitrack.get_device_list()
-i = 1
-dev = devices[i] # Set i to the index of the device you want to select
-print(dev.get_name(), dev.get_serial_number())
-nuitrack.set_device(dev)
-
-
-#print(nuitrack.get_version())
-#print(nuitrack.get_license())
-
-nuitrack.create_modules()
-nuitrack.run()
-
-modes = cycle(["depth", "color"])
-mode = next(modes)
-while 1:
-	key = cv2.waitKey(1)
-	nuitrack.update()
-	data = nuitrack.get_skeleton()
-	data_instance=nuitrack.get_instance()
-	img_depth = nuitrack.get_depth_data()
-	if img_depth.size:
-		cv2.normalize(img_depth, img_depth, 0, 255, cv2.NORM_MINMAX)
-		img_depth = np.array(cv2.cvtColor(img_depth,cv2.COLOR_GRAY2RGB), dtype=np.uint8)
-		img_color = nuitrack.get_color_data()
-		draw_skeleton(img_depth)
-		draw_skeleton(img_color)
-		
-		if key == 32:
-			mode = next(modes)
-		if mode == "depth":
-			cv2.imshow('Image', img_depth)
-		if mode == "color":
-			if img_color.size:
-				cv2.imshow('Image', img_color)
-	if key == 27:
-		break
-
-nuitrack.release()
-'''

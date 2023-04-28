@@ -38,7 +38,8 @@ class InfluxdbPublisherNode(Node):
             .field("x", msg.data[1]) \
             .field("y", msg.data[2]) \
             .field("d", msg.data[3]) \
-            .time(timestamp,"ms")
+            .time(timestamp,"ms") 
+        
         #write this point in the bucket
         self.influxdb_write_api.write(bucket="min_distance_test", record=data_point)
         #self.get_logger().info('timestamp {}'.format(timestamp))
