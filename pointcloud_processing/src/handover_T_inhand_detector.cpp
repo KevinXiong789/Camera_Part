@@ -801,7 +801,7 @@ private:
     float distance_threshold = 0.16;
 
     if (!isnan(tool_max_point[0]) && distanceComputing(tool_max_point, hand_centroid)> distance_threshold){
-      //RCLCPP_INFO(get_logger(), "Tool in hand!!!!!!!!!!!!!");
+      RCLCPP_INFO(get_logger(), "Tool in hand!!!!!!!!!!!!!");
 
       // search for the nearest points from max point to compute the centroid
       // and so to get the tool grasping position
@@ -834,7 +834,7 @@ private:
       Eigen::Vector4f toolgrasp_centroid;
       // tool grasping position is toolgrasp_centroid
       pcl::compute3DCentroid(max_cloud_const, toolgrasp_centroid);
-      //printf("toolgrasp_position: %f, %f, %f \n",toolgrasp_centroid(0),toolgrasp_centroid(1),toolgrasp_centroid(2));
+      printf("toolgrasp_position: %f, %f, %f \n",toolgrasp_centroid(0),toolgrasp_centroid(1),toolgrasp_centroid(2));
 
 
       // get the angle to grasp the tool
@@ -851,7 +851,7 @@ private:
 
       float roll_command_deg = pcl::rad2deg(R_angle+angles::from_degrees(-180));
       float pitch_command_deg = pcl::rad2deg(-P_angle+angles::from_degrees(90));
-      //printf("roll: %f, pitch: %f \n", roll_command_deg, pitch_command_deg);
+      printf("roll: %f, pitch: %f \n", roll_command_deg, pitch_command_deg);
 
       // publish tool grasping position
       std_msgs::msg::Float32MultiArray tool_grasping_position_msg;
@@ -860,37 +860,11 @@ private:
       handover_trigged_msg.data = false;
 
     } else {
-      //RCLCPP_INFO(get_logger(), "Tool not in hand");
+      RCLCPP_INFO(get_logger(), "Tool not in hand");
     }
 
 
-    printf("xyz: %.4f, %.4f, %.4f \n", right_hand_x, right_hand_y, right_hand_z);
-    if (is_in_the_cell()){
-      float distance = std::sqrt(std::pow(right_hand_x - prev_x, 2) +
-                                 std::pow(right_hand_y - prev_y, 2) +
-                                 std::pow(right_hand_z - prev_z, 2));
-      
-
-      if (distance > 0.01){
-        timer_duration = 0;
-      } else {
-        timer_duration += (this->now() - prev_time).seconds();
-      }
-
-      if (timer_duration > static_hand_duration){
-        RCLCPP_INFO(this->get_logger(), "Handover triggered!!!!!!!!!!!!!!!!!!");
-        
-        handover_trigged_msg.data = true;
-        handover_bool_pub->publish(handover_trigged_msg);
-      }
-
-      // Update previous position and time
-      prev_x = right_hand_x;
-      prev_y = right_hand_y;
-      prev_z = right_hand_z;
-      prev_time = this->now();
-      handover_trigged_msg.data = false;
-    }
+    
 
   
    
@@ -949,6 +923,36 @@ private:
     right_elbow_x = right_elbow_x_cam1;
     right_elbow_y = right_elbow_y_cam1;
     right_elbow_z = right_elbow_z_cam1;
+
+
+    // check right hand is in workcell
+    //printf("xyz: %.4f, %.4f, %.4f \n", right_hand_x, right_hand_y, right_hand_z);
+    if (is_in_the_cell()){
+      float distance = std::sqrt(std::pow(right_hand_x - prev_x, 2) +
+                                 std::pow(right_hand_y - prev_y, 2) +
+                                 std::pow(right_hand_z - prev_z, 2));
+      
+
+      if (distance > 0.01){
+        timer_duration = 0;
+      } else {
+        timer_duration += (this->now() - prev_time).seconds();
+      }
+
+      if (timer_duration > static_hand_duration){
+        //RCLCPP_INFO(this->get_logger(), "Handover triggered!!!!!!!!!!!!!!!!!!");
+        
+        handover_trigged_msg.data = true;
+        handover_bool_pub->publish(handover_trigged_msg);
+      }
+
+      // Update previous position and time
+      prev_x = right_hand_x;
+      prev_y = right_hand_y;
+      prev_z = right_hand_z;
+      prev_time = this->now();
+      handover_trigged_msg.data = false;
+    }
   }
 
 
