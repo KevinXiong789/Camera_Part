@@ -1,3 +1,4 @@
+# **************************subscribe right hand position from topic and send them to InfluxDB********************
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32MultiArray

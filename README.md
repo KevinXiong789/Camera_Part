@@ -6,7 +6,7 @@ Here is two pkg in my project, some of the code can just run with another pkg *r
 * [Nuitrack install](https://github.com/3DiVi/nuitrack-sdk) + for [python beta](https://github.com/3DiVi/nuitrack-sdk/blob/master/PythonNuitrack-beta/README.MD)
 * [InfluxDB-client](https://www.influxdata.com/blog/getting-started-python-influxdb/) for python *(and you also need to have your own InfluxDB account)*
 ## Finished Tasks
-### pointcloud_test
+### pointcloud_processing
 this pkg (min-distance-get-pub.cpp) can get pointcloud from D435 camera and calculate min-distance between pointcloud and another point, then publish this distance and this point position as a topic *"minimum_distance_topic"*
 **this pkg can only run with realsense-ros together**
 #### run
@@ -14,12 +14,8 @@ In workspace, Terminal 1:
 `ros2 launch realsense2_camera rs_launch.py pointcloud.enable:=true`
 
 Terminal 2:
-`ros2 run pointcloud_test min_distance_get`
-### pointcloud_processing
-this pkg realize same function with pointcloud_test, but cmakelist and code are cleaner
-#### run
-Terminal 2:
 `ros2 run pointcloud_processing min_distance`
+
 
 ### influxdb_test
 this pkg realize:
